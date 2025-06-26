@@ -7,7 +7,6 @@ import smtplib
 import pydeck as pdk
 from datetime import datetime
 from email.message import EmailMessage
-from tensorflow.keras.models import load_model
 import joblib
 
 # Suppress log clutter
