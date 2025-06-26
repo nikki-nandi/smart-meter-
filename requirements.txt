@@ -1,0 +1,10 @@
+streamlit
+pandas
+numpy
+pydeck
+matplotlib
+scikit-learn
+xgboost
+joblib
+email-validator
+gdown
