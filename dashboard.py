@@ -21,7 +21,7 @@ refresh_rate = st.sidebar.slider("🔁 Refresh interval (sec)", 1, 10, 5)
 data_choice = st.sidebar.radio("🧪 Data Source", ["Real", "Simulated"])
 
 # Load Monitoring Data
-DATA_PATH = "data/preprocessed_data.csv" if data_choice == "Real" else "data/simulated_data.csv"
+DATA_PATH = "preprocessed_data.csv" if data_choice == "Real" else "data/simulated_data.csv"
 df = pd.read_csv(
     DATA_PATH,
     parse_dates=["RealtimeClockDateandTime"],
@@ -74,43 +74,3 @@ while True:
     i += 1
     time.sleep(refresh_rate)
 
-# ------------------------
-# 🔮 Energy Forecast Section
-# ------------------------
-
-st.markdown("---")
-st.title("📊 7-Day Smart Meter Energy Forecast")
-
-try:
-    # Load Model and Scalers
-    model = load_model("models/final_energy_forecast_model.h5")
-    feature_scaler = joblib.load("models/final_feature_scaler.pkl")
-    target_scaler = joblib.load("models/final_target_scaler.pkl")
-
-    # File Uploader
-    uploaded_file = st.file_uploader("14_day_inp", type="csv")
-
-    if uploaded_file is not None:
-        new_data = pd.read_csv(uploaded_file)
-
-        if new_data.shape[0] != 14:
-            st.error("❌ Upload must contain exactly 14 rows (days) of input features.")
-        else:
-            # Predict
-            input_scaled = feature_scaler.transform(new_data)
-            input_seq = np.expand_dims(input_scaled, axis=0)
-
-            pred = model.predict(input_seq)
-            pred = pred.reshape(7, 2)
-            pred_inv = target_scaler.inverse_transform(pred)
-
-            # Display Prediction
-            st.subheader("✅ Predicted Energy Usage (Next 7 Days)")
-            forecast_df = pd.DataFrame(pred_inv, columns=["Predicted_kWh", "Predicted_kVAh"])
-            forecast_df.index = [f"Day {i+1}" for i in range(7)]
-            st.dataframe(forecast_df)
-
-            st.line_chart(forecast_df)
-
-except Exception as e:
-    st.error(f"⚠️ Forecast model loading error: {e}")
