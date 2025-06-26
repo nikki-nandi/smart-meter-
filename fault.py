@@ -27,7 +27,7 @@ uploaded_file = st.file_uploader("📂 Upload Smart Meter CSV", type="csv")
 if uploaded_file:
     df = pd.read_csv(uploaded_file, parse_dates=["RealtimeClockDateandTime"])
 else:
-    DATA_PATH = "data/preprocessed_data.csv"
+    DATA_PATH = "preprocessed_data.csv"
     if os.path.exists(DATA_PATH):
         df = pd.read_csv(DATA_PATH, parse_dates=["RealtimeClockDateandTime"], dayfirst=True)
     else:
